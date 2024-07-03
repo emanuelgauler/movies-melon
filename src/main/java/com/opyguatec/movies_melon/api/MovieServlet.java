@@ -44,8 +44,6 @@ public class MovieServlet extends HttpServlet {
       } catch (Exception e) {
          resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
       }
-
-      //super.doGet(req, resp);
    }
 
    @Override
