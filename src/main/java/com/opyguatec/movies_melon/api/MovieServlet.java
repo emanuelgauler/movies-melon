@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.opyguatec.movies_melon.api.utils.MovieNotFoundResponse;
 import com.opyguatec.movies_melon.api.utils.MovieResponseModel;
 import com.opyguatec.movies_melon.core.Movie;
 import com.opyguatec.movies_melon.core.MoviesMelon;
@@ -35,12 +36,18 @@ public class MovieServlet extends HttpServlet {
       mapper.setDateFormat(release_parser);
       String movie_id = req.getPathInfo().replaceAll("/", "");
       try {
-         Movie m = melones.listing().stream()
+         Movie movie = melones.find_movie_for_id(movie_id);
+         /*melones.listing().stream()
                .filter(e -> e.its_id().equals(movie_id))
                .findFirst().orElse(null);
-         resp.getWriter().println(mapper.writeValueAsString(MovieResponseModel.with(m)));
-      } catch (ParseException e) {
-         resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+               */
+         
+         if( movie != null ) {
+            resp.getWriter().println(mapper.writeValueAsString(MovieResponseModel.with(movie)));
+         } else {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().println(mapper.writeValueAsString(new MovieNotFoundResponse()));
+         }
       } catch (Exception e) {
          resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
       }

@@ -52,7 +52,7 @@ public class MysqlMoviesStore implements MoviesStore {
    }
 
    @Override
-   public Optional<Movie> find_by_id(String its_id) {
+   public Movie find_by_id(String its_id) {
       // TODO Auto-generated method stub
       throw new UnsupportedOperationException("Unimplemented method 'find_by_id'");
    }

@@ -1,7 +1,6 @@
 package com.opyguatec.movies_melon.core;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface MoviesStore {
 
@@ -11,6 +10,6 @@ public interface MoviesStore {
 
    boolean is_online();
 
-   Optional<Movie> find_by_id(String its_id);
+   Movie find_by_id(String its_id);
 
 }

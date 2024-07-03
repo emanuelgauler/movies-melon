@@ -1,7 +1,6 @@
 package com.opyguatec.movies_melon.core;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class StoreInMemory implements MoviesStore {
    
@@ -23,10 +22,10 @@ public class StoreInMemory implements MoviesStore {
    }
 
    @Override
-   public Optional<Movie> find_by_id(String its_id) {
+   public Movie find_by_id(String its_id) {
       return  movies.stream()
          .filter( e -> e.its_id() == its_id )
-         .findFirst();
+         .findFirst().orElse(null);
    }
 
 }

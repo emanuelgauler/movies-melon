@@ -1,6 +1,5 @@
 package com.opyguatec.movies_melon.core;
 import java.util.List;
-import java.util.Optional;
 
 public class MoviesMelon {
 
@@ -18,7 +17,7 @@ public class MoviesMelon {
       store.add(movie);
    }
 
-   public Optional<Movie> find_movie_for_id(String its_id) {
+   public Movie find_movie_for_id(String its_id) {
       return store.find_by_id(its_id);
    }
 

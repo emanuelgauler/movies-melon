@@ -48,9 +48,9 @@ public class MoviesTest {
       MoviesMelon movies = new MoviesMelon(store);
       movies.add(movie);
       
-      Optional<Movie> expected_movie = movies.find_movie_for_id(movie.its_id());
+      Movie expected_movie = movies.find_movie_for_id(movie.its_id());
 
       
-      assertThat(expected_movie.isPresent(), is(true));
+      assertThat(expected_movie, is(true));
    }
 }
