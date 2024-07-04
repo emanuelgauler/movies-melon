@@ -37,10 +37,12 @@ public class MovieServlet extends HttpServlet {
       String movie_id = req.getPathInfo().replaceAll("/", "");
       try {
          Movie movie = melones.find_movie_for_id(movie_id);
-         /*melones.listing().stream()
-               .filter(e -> e.its_id().equals(movie_id))
-               .findFirst().orElse(null);
-               */
+         /*
+          * $$$ Recordatorio como lo hice al principio $$$
+          * melones.listing().stream()
+          * .filter(e -> e.its_id().equals(movie_id))
+          * .findFirst().orElse(null);
+          */
          
          if( movie != null ) {
             resp.getWriter().println(mapper.writeValueAsString(MovieResponseModel.with(movie)));
