@@ -31,9 +31,8 @@ public class MovieServlet extends HttpServlet {
    @Override
    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
       resp.setContentType("application/json");
-      String movie_id = req.getPathInfo().replaceAll("/", "");
       try {
-         Movie movie = melones.find_movie_for_id(movie_id);
+         Movie movie = melones.find_movie_for_id(movie_id_from(req));
          /*
           * $$$ Recordatorio como lo hice al principio $$$
           * melones.listing().stream()
@@ -50,6 +49,11 @@ public class MovieServlet extends HttpServlet {
       } catch (Exception e) {
          resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
       }
+   }
+
+   private String movie_id_from(HttpServletRequest req) {
+      String movie_id = req.getPathInfo().replaceAll("/", "");
+      return movie_id;
    }
 
    @Override
