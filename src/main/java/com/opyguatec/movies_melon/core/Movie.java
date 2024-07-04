@@ -98,4 +98,11 @@ public class Movie {
    public String its_id() {
       return this.id;
    }
+
+   public void copy_value_of(Movie replacement) {
+      title       = replacement.title;
+      synopsys    = replacement.synopsys;
+      release     = replacement.release;
+      poster      = replacement.poster;
+   }
 }
