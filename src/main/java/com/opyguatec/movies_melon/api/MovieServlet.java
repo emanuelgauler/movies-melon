@@ -57,9 +57,20 @@ public class MovieServlet extends HttpServlet {
    }
 
    @Override
-   protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-      // TODO Auto-generated method stub
-      super.doPatch(req, resp);
+   protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+      try {
+         Movie movie = melones.find_movie_for_id(movie_id_from(req));
+         Movie replacement = mapper.readValue(req.getReader(), Movie.class);
+         if( movie != null ) {
+            movie.copy_value_of( replacement );
+            resp.getWriter().println(mapper.writeValueAsString(movie));
+         } else {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().println(mapper.writeValueAsString(new MovieNotFoundResponse()));
+         }
+      } catch (Exception e) {
+         resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+      }
    }
 
    @Override
