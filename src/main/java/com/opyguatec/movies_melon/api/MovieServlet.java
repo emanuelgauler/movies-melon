@@ -1,6 +1,5 @@
 package com.opyguatec.movies_melon.api;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -20,8 +19,8 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "MovieServlet", urlPatterns = "/api/movies/*")
 public class MovieServlet extends HttpServlet {
 
-   private DateFormat release_parser = new SimpleDateFormat("dd/MM/yyyy");
    private MoviesMelon melones;
+   private ObjectMapper mapper;
 
    @Override
    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -32,8 +31,6 @@ public class MovieServlet extends HttpServlet {
    @Override
    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
       resp.setContentType("application/json");
-      ObjectMapper mapper = new ObjectMapper();
-      mapper.setDateFormat(release_parser);
       String movie_id = req.getPathInfo().replaceAll("/", "");
       try {
          Movie movie = melones.find_movie_for_id(movie_id);
@@ -66,6 +63,8 @@ public class MovieServlet extends HttpServlet {
       super.init();
       try {
          melones = new MoviesMelon(new StoreInMemory());
+         mapper = new ObjectMapper();
+         mapper.setDateFormat(new SimpleDateFormat("dd/MM/yyyy"));
       } catch (ParseException e) {
          e.printStackTrace();
       }
