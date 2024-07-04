@@ -21,4 +21,8 @@ public class MoviesMelon {
       return store.find_by_id(its_id);
    }
 
+   public void remove_from_id(String its_id) throws MovieNotFoundError {
+      store.remove_from_id(its_id);
+   }
+
 }

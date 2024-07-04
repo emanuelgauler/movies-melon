@@ -28,4 +28,10 @@ public class StoreInMemory implements MoviesStore {
          .findFirst().orElse(null);
    }
 
+   @Override
+   public void remove_from_id(String its_id) throws MovieNotFoundError {
+      if( !movies.removeIf( e -> its_id.equals(e.its_id()) ) )
+         throw new MovieNotFoundError();
+   }
+
 }

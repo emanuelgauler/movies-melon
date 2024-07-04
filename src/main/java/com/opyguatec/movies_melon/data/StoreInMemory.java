@@ -5,8 +5,10 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.opyguatec.movies_melon.core.Movie;
 import com.opyguatec.movies_melon.core.MovieExistingError;
+import com.opyguatec.movies_melon.core.MovieNotFoundError;
 import com.opyguatec.movies_melon.core.MoviesStore;
 
 public class StoreInMemory implements MoviesStore {
@@ -54,6 +56,12 @@ public class StoreInMemory implements MoviesStore {
       return movies.stream()
          .filter( e -> its_id.equals(e.its_id()) )
          .findFirst().orElse(null);
+   }
+
+   @Override
+   public void remove_from_id(String its_id) throws MovieNotFoundError {
+      if( !movies.removeIf( e -> its_id.equals(e.its_id()) ) )
+         throw new MovieNotFoundError();
    }
 
 }

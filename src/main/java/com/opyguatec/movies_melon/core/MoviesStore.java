@@ -6,10 +6,12 @@ public interface MoviesStore {
 
    void add(Movie movie) throws MovieExistingError;
 
-   List<Movie> listing() throws Exception;
+   List<Movie> listing();
 
    boolean is_online();
 
    Movie find_by_id(String its_id);
+
+   void remove_from_id(String its_id) throws MovieNotFoundError;
 
 }
