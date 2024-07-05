@@ -7,7 +7,16 @@ import java.util.Arrays;
 
 public class Movie {
    private List<String> cast = new ArrayList<String>();
-   private List<String> directors = new ArrayList<>();
+   public List<String> getCast() {
+      return cast;
+   }
+
+   private String director;
+   public String getDirector() {
+      return director;
+   }
+
+
    private List<String> genres = new ArrayList<>();
 
    public void add_an_actor( String actor_name ) {
@@ -29,14 +38,6 @@ public class Movie {
    public boolean has_actors(String ...actors) {
       return cast.containsAll(List.of(actors));
    }
-
-	public boolean has_this_directors(String director) {
-      return directors.contains(director);
-	}
-
-	public void add_an_director(String director) {
-      this.directors.add( director );
-	}
 
    public boolean has_genres(String ...genres ) {
       return this.genres.containsAll( List.of(genres) );
@@ -81,18 +82,20 @@ public class Movie {
       return poster;
    }
 
-   public static Movie with(String title, String synopsys, Date release, String path_file) {
+   public static Movie with(String title, String synopsys, Date release, String path_file, String director, List<String> cast) {
       Movie new_movie = new Movie();
       new_movie.id         = UUID.randomUUID().toString();
       new_movie.title      = title;
       new_movie.synopsys   = synopsys;
       new_movie.release    = release;
       new_movie.poster     = path_file;
+      new_movie.cast       = cast;
+      new_movie.director   = director;
       return new_movie;
    }
 
    public static Movie with( Movie other ) {
-      return with(other.title, other.synopsys, other.release, other.poster);
+      return with(other.title, other.synopsys, other.release, other.poster, other.director, other.cast);
    }
 
    public String its_id() {
@@ -104,5 +107,7 @@ public class Movie {
       synopsys    = replacement.synopsys;
       release     = replacement.release;
       poster      = replacement.poster;
+      director    = replacement.director;
+      cast        = replacement.cast;
    }
 }
