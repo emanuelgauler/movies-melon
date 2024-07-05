@@ -46,6 +46,7 @@ public class MoviesServlet extends HttpServlet {
 
          out.println(mapper.writeValueAsString(response_model));
       } catch (MovieExistingError e) {
+         resp.setStatus(HttpServletResponse.SC_CONFLICT);
          out.println(mapper.writeValueAsString(ErrorResponseModel.with(e)));
       } catch (Exception e) {
          String message = String.format(">> [%s] %s\n%s", e.getClass().getName(), e.getMessage(),
