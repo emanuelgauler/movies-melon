@@ -44,6 +44,8 @@ public class MoviesServlet extends HttpServlet {
 
          response_model = MovieResponseModel.with(new_movie);
 
+         resp.setStatus(HttpServletResponse.SC_CREATED);
+
          out.println(mapper.writeValueAsString(response_model));
       } catch (MovieExistingError e) {
          resp.setStatus(HttpServletResponse.SC_CONFLICT);
