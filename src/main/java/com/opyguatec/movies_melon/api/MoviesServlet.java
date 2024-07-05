@@ -66,9 +66,7 @@ public class MoviesServlet extends HttpServlet {
       PrintWriter out = resp.getWriter();
 
       try {
-         List<MovieResponseModel> movies = transform_to_response_model(melones);
-
-         String response = mapper.writeValueAsString( movies );
+         String response = mapper.writeValueAsString( movies_from(melones) );
          out.printf("{\"movies\":%s, \"count\":%d }", response, melones.listing().size());
       } catch (JsonProcessingException e ) {
          resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
@@ -78,7 +76,7 @@ public class MoviesServlet extends HttpServlet {
    }
 
 
-   private List<MovieResponseModel> transform_to_response_model(MoviesMelon melones) throws Exception {
+   private List<MovieResponseModel> movies_from(MoviesMelon melones) throws Exception {
       List<MovieResponseModel> movies = melones.listing()
             .stream().map(e -> MovieResponseModel.with(e))
             .collect(Collectors.toList());
