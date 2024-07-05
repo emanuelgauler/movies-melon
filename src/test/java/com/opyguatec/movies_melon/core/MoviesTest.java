@@ -7,14 +7,28 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.List;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class MoviesTest {
    DateFormat release_parser = new SimpleDateFormat("dd/MM/yyyy");
+   Movie movie_1 = null, movie_2 = null;
+
+   @BeforeEach
+   void setup() throws ParseException {
+      movie_1 = Movie.with("titulo1", "sinopsis 1",
+            release_parser.parse("26/04/2023"),
+            "some-path", "some director", List.of());
+      movie_2 = Movie.with("titulo2", "sinopsis 2",
+            release_parser.parse("26/02/2020"),
+            "some-other-path", "some other director", List.of());
+   }
+
    @Test void 
    que_retorna_un_array_de_peliculas() throws Exception {
       MoviesStore store_in_memory = new StoreInMemory();
@@ -46,7 +60,7 @@ public class MoviesTest {
 
    @Test void 
    que_encuentra_una_pelicula_por_su_id() throws ParseException {
-      Movie movie = Movie.with("Un título", "Un resumen de la película", release_parser.parse("26/05/2024"), "sin imagen");
+      Movie movie = movie_1;
 
       MoviesStore store = new StoreInMemory();
       MoviesMelon movies = new MoviesMelon(store);
@@ -62,12 +76,6 @@ public class MoviesTest {
    que_puede_eliminar_una_pelicula_por_su_id() throws Exception {
       MoviesStore store = new StoreInMemory();
       MoviesMelon movies = new MoviesMelon(store);
-      Movie movie_1 = Movie.with("titulo1", "sinopsis 1",
-            release_parser.parse("26/04/2023"),
-            "some-path"),
-            movie_2 = Movie.with("titulo2", "sinopsis 2",
-                  release_parser.parse("26/02/2020"),
-                  "some-other-path");
       movies.add( movie_1 );
       movies.add( movie_2 );
       String movie_1_id = movie_1.its_id();
@@ -82,12 +90,6 @@ public class MoviesTest {
    void que_lanza_una_excepcion_si_la_pelicula_a_eliminar_no_existe() throws ParseException {
       MoviesStore store = new StoreInMemory();
       MoviesMelon movies = new MoviesMelon(store);
-      Movie movie_1 = Movie.with("titulo1", "sinopsis 1",
-            release_parser.parse("26/04/2023"),
-            "some-path"),
-            movie_2 = Movie.with("titulo2", "sinopsis 2",
-                  release_parser.parse("26/02/2020"),
-                  "some-other-path");
       movies.add(movie_1);
       movies.add(movie_2);
 
