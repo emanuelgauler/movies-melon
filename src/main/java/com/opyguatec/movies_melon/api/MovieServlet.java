@@ -70,7 +70,7 @@ public class MovieServlet extends HttpServlet {
          Movie replacement = mapper.readValue(req.getReader(), Movie.class);
          if( movie != null ) {
             movie.copy_value_of( replacement );
-            resp.getWriter().println(mapper.writeValueAsString(movie));
+            resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
          } else {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             resp.getWriter().println(mapper.writeValueAsString(new MovieNotFoundResponse()));
