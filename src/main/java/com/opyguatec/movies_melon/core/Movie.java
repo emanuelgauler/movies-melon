@@ -19,6 +19,10 @@ public class Movie {
 
    private List<String> genres = new ArrayList<>();
 
+   public List<String> getGenres() {
+      return genres;
+   }
+
    public void add_an_actor( String actor_name ) {
       this.cast.add( actor_name );
    }
@@ -85,12 +89,7 @@ public class Movie {
    public static Movie with(String title, String synopsys, Date release, String path_file, String director, List<String> cast) {
       Movie new_movie = new Movie();
       new_movie.id         = UUID.randomUUID().toString();
-      new_movie.title      = title;
-      new_movie.synopsys   = synopsys;
-      new_movie.release    = release;
-      new_movie.poster     = path_file;
-      new_movie.cast       = cast;
-      new_movie.director   = director;
+      new_movie.copy_values_of(title, synopsys, release, path_file, director, cast, cast);
       return new_movie;
    }
 
@@ -103,11 +102,18 @@ public class Movie {
    }
 
    public void copy_value_of(Movie replacement) {
-      title       = replacement.title;
-      synopsys    = replacement.synopsys;
-      release     = replacement.release;
-      poster      = replacement.poster;
-      director    = replacement.director;
-      cast        = replacement.cast;
+      copy_values_of(replacement.title, replacement.synopsys, replacement.release,
+            replacement.poster,
+            replacement.director, replacement.cast, replacement.genres);
+   }
+
+   public void copy_values_of( String title, String synopsys, Date release, String path_file, String director, List<String> cast, List<String> genres) {
+      this.title        = title;
+      this.synopsys     = synopsys;
+      this.release      = release;
+      this.director     = director;
+      this.cast         = cast;
+      this.genres       = genres;
+      this.poster       = path_file;
    }
 }
