@@ -70,6 +70,7 @@ public class MovieServlet extends HttpServlet {
          Movie replacement = mapper.readValue(req.getReader(), Movie.class);
          if( movie != null ) {
             movie.copy_value_of( replacement );
+            melones.save(movie);
             resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
          } else {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
