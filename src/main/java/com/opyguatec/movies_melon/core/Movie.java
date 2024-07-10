@@ -116,4 +116,11 @@ public class Movie {
       this.genres       = genres;
       this.poster       = path_file;
    }
+
+   public void copy_values_of(String id, String title
+   , String synopsys, Date release, String path_file, String director,
+         List<String> cast, List<String> genres) {
+      this.id = id;
+      this.copy_values_of(title, synopsys, release, path_file, director, cast, genres );
+   }
 }

@@ -25,4 +25,8 @@ public class MoviesMelon {
       store.remove_from_id(its_id);
    }
 
+   public void save(Movie movie) {
+      store.save(movie);
+   }
+
 }
