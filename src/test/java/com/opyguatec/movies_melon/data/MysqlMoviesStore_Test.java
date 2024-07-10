@@ -1,10 +1,10 @@
 package com.opyguatec.movies_melon.data;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.opyguatec.movies_melon.core.Movie;
+import com.opyguatec.movies_melon.core.MovieNotFoundError;
 import com.opyguatec.movies_melon.core.MoviesStore;
 
 public class MysqlMoviesStore_Test {
@@ -67,7 +68,10 @@ public class MysqlMoviesStore_Test {
 
       movies.add( a_movie );
 
-      assertThat(movies.listing(), is(not(empty())));
+      Movie movie = movies.find_by_id(a_movie.its_id());
+
+      assertThat(movie.its_id(), is(equalTo(a_movie.its_id())));
+      assertThat(movie.getTitle(), is(equalTo(a_movie.getTitle())));
    }
 
    @Test void 
@@ -94,5 +98,28 @@ public class MysqlMoviesStore_Test {
 
       movies.save(movie);
 
+      Movie movie_updated = movies.find_by_id(movie.its_id());
+      assertThat(movie_updated.getSynopsys(), is(equalTo(new_synopsys)));
    }
+
+   @Test void 
+   that_can_delete_a_movie() throws ParseException, SQLException {
+      MoviesStore movies = new MysqlMoviesStore();
+      List<String> cast = List.of("A1", "A2");
+      Date release = new SimpleDateFormat("dd-MM-yyyy").parse("24-05-2023");
+      Movie movie = Movie.with("Some Title", "Some synopsys", release, "some/path/file", "Some Director",
+      cast);
+
+      movies.add(movie);
+
+      try {
+         movies.remove_from_id(movie.its_id());
+      } catch (MovieNotFoundError e) {
+         fail(e.getMessage());
+      }
+      Movie another_movie = movies.find_by_id(movie.its_id());
+
+      assertThat(another_movie, is(nullValue()));
+   }
+
 }

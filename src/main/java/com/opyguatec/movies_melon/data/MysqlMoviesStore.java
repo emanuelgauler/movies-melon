@@ -100,11 +100,24 @@ public class MysqlMoviesStore implements MoviesStore {
 
    @Override
    public Movie find_by_id(String its_id) {
-      return new Movie();
-   }
+      Movie movie = null;
+      try {
+         open_connection();
+         PreparedStatement query = connection.prepareStatement("SELECT * FROM movies WHERE id=?;");
+         query.setString(1, its_id);
+         ResultSet result = query.executeQuery();
+         if (result.next()) {
+            movie = new Movie();
+            movie.copy_values_of(
+                  result.getString("id"), result.getString("title"), result.getString("synopsys"),
+                  result.getTimestamp("release_date"), result.getString("director"), result.getString("poster"), null,
+                  null);
+         }
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
 
-   @Override
-   public void remove_from_id(String its_id) throws MovieNotFoundError {
+      return movie;
    }
 
    @Override
@@ -128,6 +141,23 @@ public class MysqlMoviesStore implements MoviesStore {
          close_connection();
       } catch (Exception e) {
          e.printStackTrace();
+      }
+   }
+
+   @Override
+   public void remove_from_id(String id) throws MovieNotFoundError {
+      String instruction = "DELETE FROM movies WHERE id=?;";
+      try {
+         open_connection();
+         PreparedStatement command = connection.prepareStatement(instruction);
+         
+         command.setString(1, id);
+         command.executeUpdate();
+
+         close_connection();
+      } catch (Exception e) {
+         e.printStackTrace();
+         throw new MovieNotFoundError();
       }
    }
 
