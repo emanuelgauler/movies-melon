@@ -71,4 +71,8 @@ public class StoreInMemory implements MoviesStore {
          throw new MovieNotFoundError();
    }
 
+   @Override
+   public void save(Movie movie) {
+   }
+
 }
