@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.opyguatec.movies_melon.core.Movie;
+import com.opyguatec.movies_melon.core.MovieExistingError;
 import com.opyguatec.movies_melon.core.MovieNotFoundError;
 import com.opyguatec.movies_melon.core.MoviesStore;
 
@@ -57,7 +58,7 @@ public class MysqlMoviesStore_Test {
 
 
    @Test void
-   that_can_add_a_movie() throws ParseException, SQLException {
+   that_can_add_a_movie() throws MovieExistingError, Exception {
       Date date = new SimpleDateFormat("dd/MM/yyyy")
             .parse("26/05/2024");
       List<String> cast = List.of("a1", "a2", "a3");
@@ -75,7 +76,7 @@ public class MysqlMoviesStore_Test {
    }
 
    @Test void 
-   that_can_change_a_data_of_movie() throws SQLException, ParseException {
+   that_can_change_a_data_of_movie() throws MovieExistingError, Exception {
       MoviesStore movies = new MysqlMoviesStore();
       List<String> cast = List.of("A1", "A2");
       Date release_date = new SimpleDateFormat("dd-MM-yyyy").parse("25-05-2023");
@@ -103,7 +104,7 @@ public class MysqlMoviesStore_Test {
    }
 
    @Test void 
-   that_can_delete_a_movie() throws ParseException, SQLException {
+   that_can_delete_a_movie() throws MovieExistingError, Exception {
       MoviesStore movies = new MysqlMoviesStore();
       List<String> cast = List.of("A1", "A2");
       Date release = new SimpleDateFormat("dd-MM-yyyy").parse("24-05-2023");

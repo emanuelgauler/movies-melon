@@ -13,7 +13,7 @@ public class MoviesMelon {
       return store.listing();
    }
 
-   public void add(Movie movie) throws MovieExistingError {
+   public void add(Movie movie) throws MovieExistingError, Exception {
       store.add(movie);
    }
 

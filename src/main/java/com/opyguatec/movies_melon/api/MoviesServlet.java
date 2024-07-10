@@ -3,7 +3,6 @@ package com.opyguatec.movies_melon.api;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,8 +14,7 @@ import com.opyguatec.movies_melon.api.utils.MovieResponseModel;
 import com.opyguatec.movies_melon.core.Movie;
 import com.opyguatec.movies_melon.core.MovieExistingError;
 import com.opyguatec.movies_melon.core.MoviesMelon;
-import com.opyguatec.movies_melon.data.StoreInMemory;
-
+import com.opyguatec.movies_melon.data.MysqlMoviesStore;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -87,11 +85,7 @@ public class MoviesServlet extends HttpServlet {
    @Override
    public void init() throws ServletException {
       super.init();
-      try {
-         melones = new MoviesMelon(new StoreInMemory());
-      } catch (ParseException e) {
-         e.printStackTrace();
-      }
+      melones = new MoviesMelon(new MysqlMoviesStore());
    }
 
 }

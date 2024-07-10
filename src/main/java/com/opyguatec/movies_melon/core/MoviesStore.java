@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface MoviesStore {
 
-   void add(Movie movie) throws MovieExistingError;
+   void add(Movie movie) throws MovieExistingError, Exception;
 
    List<Movie> listing();
 

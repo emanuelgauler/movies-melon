@@ -59,7 +59,7 @@ public class MoviesTest {
    }
 
    @Test void 
-   que_encuentra_una_pelicula_por_su_id() throws ParseException {
+   que_encuentra_una_pelicula_por_su_id() throws MovieExistingError, Exception {
       Movie movie = movie_1;
 
       MoviesStore store = new StoreInMemory();
@@ -87,7 +87,7 @@ public class MoviesTest {
    }
 
    @Test
-   void que_lanza_una_excepcion_si_la_pelicula_a_eliminar_no_existe() throws ParseException {
+   void que_lanza_una_excepcion_si_la_pelicula_a_eliminar_no_existe() throws MovieExistingError, Exception {
       MoviesStore store = new StoreInMemory();
       MoviesMelon movies = new MoviesMelon(store);
       movies.add(movie_1);

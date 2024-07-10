@@ -10,23 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.opyguatec.movies_melon.core.Movie;
-import com.opyguatec.movies_melon.core.MovieExistingError;
 import com.opyguatec.movies_melon.core.MovieNotFoundError;
 import com.opyguatec.movies_melon.core.MoviesStore;
 
 public class MysqlMoviesStore implements MoviesStore {
 
-   private static final String MYSQL_URL = "jdbc:mysql://localhost:3306/movies_melon";
+   private static final String MYSQL_URL = "jdbc:mysql://127.0.0.1:3306/movies_melon";
    private static final String MYSQL_USER = "root";
    private static final String MYSQL_PASSWORD = "e.m.a.11223";
    private Connection connection;
 
-   public MysqlMoviesStore() throws SQLException {
-      this.connection = DriverManager.getConnection(MYSQL_URL, MYSQL_USER, MYSQL_PASSWORD);
-   }
-
    @Override
-   public void add(Movie movie) throws MovieExistingError {
+   public void add(Movie movie) throws MovieNotFoundError, Exception {
 
       try {
          open_connection();
@@ -46,6 +41,7 @@ public class MysqlMoviesStore implements MoviesStore {
          close_connection();
       } catch (Exception e) {
          e.printStackTrace();
+         throw new Exception(e.getMessage());
       }
    }
 
@@ -53,7 +49,8 @@ public class MysqlMoviesStore implements MoviesStore {
       connection.close();
    }
 
-   private void open_connection() throws SQLException {
+   private void open_connection() throws SQLException, ClassNotFoundException {
+      Class.forName("com.mysql.jdbc.Driver");
       this.connection = DriverManager.getConnection(MYSQL_URL, MYSQL_USER, MYSQL_PASSWORD);
    }
 
