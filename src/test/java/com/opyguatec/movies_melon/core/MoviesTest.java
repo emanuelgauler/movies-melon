@@ -23,10 +23,10 @@ public class MoviesTest {
    void setup() throws ParseException {
       movie_1 = Movie.with("titulo1", "sinopsis 1",
             release_parser.parse("26/04/2023"),
-            "some-path", "some director", List.of());
+            "some-path", "some director", List.of(), List.of());
       movie_2 = Movie.with("titulo2", "sinopsis 2",
             release_parser.parse("26/02/2020"),
-            "some-other-path", "some other director", List.of());
+            "some-other-path", "some other director", List.of(), List.of());
    }
 
    @Test void 

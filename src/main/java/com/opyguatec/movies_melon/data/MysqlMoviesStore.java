@@ -1,5 +1,6 @@
 package com.opyguatec.movies_melon.data;
 
+import java.util.logging.Logger;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -16,6 +17,8 @@ import com.opyguatec.movies_melon.core.MovieNotFoundError;
 import com.opyguatec.movies_melon.core.MoviesStore;
 
 public class MysqlMoviesStore implements MoviesStore {
+
+   private static Logger logger = Logger.getLogger(MysqlMoviesStore.class.getName());
 
    private static final String MYSQL_URL = "jdbc:mysql://127.0.0.1:3306/movies_melon";
    private static final String MYSQL_USER = "root";
@@ -94,24 +97,49 @@ public class MysqlMoviesStore implements MoviesStore {
       try {
          open_connection();
          PreparedStatement select_movies = connection.prepareStatement("SELECT * FROM movies");
+         PreparedStatement select_cast    = connection.prepareStatement("SELECT * FROM casts WHERE movie_id=?");
+         PreparedStatement select_genres  = connection.prepareStatement("SELECT * FROM genres WHERE movie_id=?");
          ResultSet result = select_movies.executeQuery();
          while (result.next()) {
+            // Recupero el ID de la película
+            String movie_id = result.getString("id");
+
+            // Establezco el ID de la película para las consultas del reparto y géneros
+            select_cast.setString(1, movie_id);
+            select_genres.setString(1, movie_id);
+
+            // Extraigo el reparto de la BD
+            ResultSet cast_from_db = select_cast.executeQuery();
+            List<String> cast = new ArrayList<>();
+            while ( cast_from_db.next() ) {
+               cast.add( cast_from_db.getString("actor_name"));
+            }
+
+            // Extraigo los géneros de la BD
+            ResultSet genres_from_db = select_genres.executeQuery();
+            List<String> genres = new ArrayList<>();
+            while( genres_from_db.next() ) {
+               genres.add(genres_from_db.getString("genre"));
+            }
+
+            // Creo la película y cargo con los datos extraídos de ls BD
             Movie movie = new Movie();
             movie.copy_values_of(
-               result.getString("id")
+                  movie_id
                , result.getString("title")
                , result.getString("synopsys")
                , result.getDate("release_date")
                , result.getString("poster")
                , result.getString("director")
-               , List.of("a1", "a2", "a3")
-               , List.of("ciencia ficción", "drama"));
+               , cast
+               , genres );
                
             movies.add(movie);
                
          }
          close_connection();
       } catch (Exception e) {
+         logger.warning(e.getMessage());
          e.printStackTrace();
       }
       return movies;
@@ -135,19 +163,37 @@ public class MysqlMoviesStore implements MoviesStore {
       try {
          open_connection();
          PreparedStatement query = connection.prepareStatement("SELECT * FROM movies WHERE id=?;");
+         PreparedStatement select_cast = connection.prepareStatement("SELECT actor_name FROM casts WHERE movie_id=?;");
+         PreparedStatement select_genres = connection.prepareStatement("SELECT genre FROM genres WHERE movie_id=?;");
          query.setString(1, its_id);
          ResultSet result = query.executeQuery();
          if (result.next()) {
+            String movie_id = result.getString("id");
+            select_cast.setString(1, movie_id);
+            select_genres.setString(1, movie_id);
+
+            ResultSet cast_from_db = select_cast.executeQuery();
+            List<String> cast = new ArrayList<>();
+            while ( cast_from_db.next() ) {
+               cast.add(cast_from_db.getString("actor_name"));
+            }
+
+            ResultSet genres_from_db = select_genres.executeQuery();
+            List<String> genres = new ArrayList<>();
+            while ( genres_from_db.next() ) {
+               genres.add(genres_from_db.getString("genre"));
+            }
+
             movie = new Movie();
             movie.copy_values_of(
-                  result.getString("id")
+                  movie_id
                   , result.getString("title")
                   , result.getString("synopsys")
                   , result.getTimestamp("release_date")
                   , result.getString("poster")
                   , result.getString("director")
-                  , null,
-                  null);
+                  , cast
+                  , genres);
          }
       } catch (Exception e) {
          e.printStackTrace();

@@ -25,7 +25,6 @@ import jakarta.servlet.http.HttpServletResponse;
 public class MoviesServlet extends HttpServlet {
 
    private DateFormat release_parser = new SimpleDateFormat("dd/MM/yyyy");
-   private MovieResponseModel response_model;
    private MoviesMelon melones;
 
    @Override
@@ -38,13 +37,14 @@ public class MoviesServlet extends HttpServlet {
 
          Movie new_movie = Movie.with(
                mapper.readValue(req.getReader(), Movie.class));
+         
          melones.add(new_movie);
-
-         response_model = MovieResponseModel.with(new_movie);
 
          resp.setStatus(HttpServletResponse.SC_CREATED);
 
-         out.println(mapper.writeValueAsString(response_model));
+         out.println(mapper.writeValueAsString(
+               MovieResponseModel.with(new_movie)));
+
       } catch (MovieExistingError e) {
          resp.setStatus(HttpServletResponse.SC_CONFLICT);
          out.println(mapper.writeValueAsString(ErrorResponseModel.with(e)));

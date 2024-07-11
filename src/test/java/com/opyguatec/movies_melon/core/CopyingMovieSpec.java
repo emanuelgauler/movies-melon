@@ -18,7 +18,7 @@ public class CopyingMovieSpec {
    that_movie_can_be_copied() throws ParseException {
       DateFormat release_date_parse = new SimpleDateFormat("dd/MM/yyyy");
       Date release_date = release_date_parse.parse("26/05/2024");
-      Movie expected = Movie.with("title", "synopsys", release_date, "some_path", "some director", List.of());
+      Movie expected = Movie.with("title", "synopsys", release_date, "some_path", "some director", List.of(), List.of());
 
       Movie actual = expected;
 

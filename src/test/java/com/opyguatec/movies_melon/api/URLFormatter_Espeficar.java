@@ -22,7 +22,7 @@ public class URLFormatter_Espeficar {
       String synopsys   ="Sinopsis de la película";
       Date release      = release_parse.parse("23-05-2024");
       String post_path  = "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/tGHUlykWn9V2IIQ4ZaATIAq9VLB.jpg";
-      Movie movie       = Movie.with(title, synopsys, release, post_path, "", List.of());
+      Movie movie       = Movie.with(title, synopsys, release, post_path, "", List.of(), List.of());
       String host       = "localhost";
       Integer port       = 8080;
       String context    = "movies-melon";

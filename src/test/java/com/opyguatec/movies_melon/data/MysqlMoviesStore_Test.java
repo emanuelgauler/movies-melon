@@ -39,7 +39,7 @@ public class MysqlMoviesStore_Test {
       , String director, List<String> cast, String release) throws ParseException {
       Date date_release = new SimpleDateFormat("dd/MM/yyyy")
             .parse(release);
-      return Movie.with(title , synopsys, date_release, path , director , cast );
+      return Movie.with(title , synopsys, date_release, path , director , cast, List.of("G+", "+18") );
    }
 
    @BeforeEach public void 
@@ -63,7 +63,7 @@ public class MysqlMoviesStore_Test {
             .parse("26/05/2024");
       List<String> cast = List.of("a1", "a2", "a3");
       Movie a_movie = Movie.with("title", "synopsys", date, "path-file"
-      , "director", cast );
+      , "director", cast, List.of("GP", "G+") );
 
       MoviesStore movies = new MysqlMoviesStore();
 
@@ -80,7 +80,7 @@ public class MysqlMoviesStore_Test {
       MoviesStore movies = new MysqlMoviesStore();
       List<String> cast = List.of("A1", "A2");
       Date release_date = new SimpleDateFormat("dd-MM-yyyy").parse("25-05-2023");
-      Movie movie = Movie.with("A title", "A synopsys", release_date, "a_path_file", "A director", cast);
+      Movie movie = Movie.with("A title", "A synopsys", release_date, "a_path_file", "A director", cast, List.of("GP", "G+"));
       
       movies.add(movie);
       
@@ -109,7 +109,7 @@ public class MysqlMoviesStore_Test {
       List<String> cast = List.of("A1", "A2");
       Date release = new SimpleDateFormat("dd-MM-yyyy").parse("24-05-2023");
       Movie movie = Movie.with("Some Title", "Some synopsys", release, "some/path/file", "Some Director",
-      cast);
+      cast, List.of("g1", "GP"));
 
       movies.add(movie);
 
