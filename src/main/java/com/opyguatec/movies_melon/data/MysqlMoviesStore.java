@@ -9,8 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import com.opyguatec.movies_melon.core.Movie;
 import com.opyguatec.movies_melon.core.MovieExistingError;
 import com.opyguatec.movies_melon.core.MovieNotFoundError;
@@ -30,9 +28,11 @@ public class MysqlMoviesStore implements MoviesStore {
 
       try {
          open_connection();
-         String instruction = "INSERT INTO movies(id, title, synopsys, director, release_date, poster) VALUES(?,?,?,?,?,?)";
+         String instruction = "INSERT INTO movies(id, title, synopsys, director, release_date, poster, cast, genres) VALUES(?,?,?,?,?,?,?,?)";
          PreparedStatement create_command = connection
                .prepareStatement(instruction);
+         String cast    = cast_from_movie(movie);
+         String genres  = genres_from_movie(movie);
 
          java.sql.Date release_date = new Date( movie.getRelease().getTime() );
          create_command.setString(1, movie.its_id());
@@ -41,11 +41,10 @@ public class MysqlMoviesStore implements MoviesStore {
          create_command.setString(4, movie.getDirector());
          create_command.setDate(5, release_date);
          create_command.setString(6, movie.getPoster());
+         create_command.setString(7, cast);
+         create_command.setString(8, genres);
          create_command.executeUpdate();
          create_command.close();
-
-         insert_cast_from(movie);
-         insert_genres_from(movie);
 
          close_connection();
       } catch (SQLException e ) {
@@ -59,27 +58,12 @@ public class MysqlMoviesStore implements MoviesStore {
       }
    }
 
-   private void insert_genres_from(Movie movie) throws SQLException {
-      String insert_genres = "INSERT INTO genres(movie_id, genre) VALUES %s";
-      String values = movie.getGenres().stream()
-            .map(e -> String.format("('%s','%s')", movie.its_id(), e))
-            .collect(Collectors.joining(","));
-
-      connection
-            .prepareStatement(String.format(insert_genres, values))
-            .executeUpdate();
+   private String cast_from_movie(Movie movie) {
+      return String.join(",", movie.getCast());
    }
 
-   private void insert_cast_from(Movie movie) throws SQLException {
-      String insert_cast = "INSERT INTO casts(movie_id, actor_name) VALUES %s";
-
-      String values = movie.getCast().stream()
-            .map(e -> String.format("('%s','%s')", movie.its_id(), e))
-            .collect(Collectors.joining(","));
-
-      connection
-         .prepareStatement(String.format(insert_cast, values))
-         .executeUpdate();
+   private String genres_from_movie(Movie movie) {
+      return String.join(",", movie.getGenres());
    }
 
    private void close_connection() throws SQLException {
@@ -97,42 +81,9 @@ public class MysqlMoviesStore implements MoviesStore {
       try {
          open_connection();
          PreparedStatement select_movies = connection.prepareStatement("SELECT * FROM movies");
-         PreparedStatement select_cast    = connection.prepareStatement("SELECT * FROM casts WHERE movie_id=?");
-         PreparedStatement select_genres  = connection.prepareStatement("SELECT * FROM genres WHERE movie_id=?");
          ResultSet result = select_movies.executeQuery();
          while (result.next()) {
-            // Recupero el ID de la película
-            String movie_id = result.getString("id");
-
-            // Establezco el ID de la película para las consultas del reparto y géneros
-            select_cast.setString(1, movie_id);
-            select_genres.setString(1, movie_id);
-
-            // Extraigo el reparto de la BD
-            ResultSet cast_from_db = select_cast.executeQuery();
-            List<String> cast = new ArrayList<>();
-            while ( cast_from_db.next() ) {
-               cast.add( cast_from_db.getString("actor_name"));
-            }
-
-            // Extraigo los géneros de la BD
-            ResultSet genres_from_db = select_genres.executeQuery();
-            List<String> genres = new ArrayList<>();
-            while( genres_from_db.next() ) {
-               genres.add(genres_from_db.getString("genre"));
-            }
-
-            // Creo la película y cargo con los datos extraídos de ls BD
-            Movie movie = new Movie();
-            movie.copy_values_of(
-                  movie_id
-               , result.getString("title")
-               , result.getString("synopsys")
-               , result.getDate("release_date")
-               , result.getString("poster")
-               , result.getString("director")
-               , cast
-               , genres );
+            Movie movie = make_movie_from(result);
                
             movies.add(movie);
                
@@ -163,43 +114,42 @@ public class MysqlMoviesStore implements MoviesStore {
       try {
          open_connection();
          PreparedStatement query = connection.prepareStatement("SELECT * FROM movies WHERE id=?;");
-         PreparedStatement select_cast = connection.prepareStatement("SELECT actor_name FROM casts WHERE movie_id=?;");
-         PreparedStatement select_genres = connection.prepareStatement("SELECT genre FROM genres WHERE movie_id=?;");
          query.setString(1, its_id);
          ResultSet result = query.executeQuery();
          if (result.next()) {
-            String movie_id = result.getString("id");
-            select_cast.setString(1, movie_id);
-            select_genres.setString(1, movie_id);
-
-            ResultSet cast_from_db = select_cast.executeQuery();
-            List<String> cast = new ArrayList<>();
-            while ( cast_from_db.next() ) {
-               cast.add(cast_from_db.getString("actor_name"));
-            }
-
-            ResultSet genres_from_db = select_genres.executeQuery();
-            List<String> genres = new ArrayList<>();
-            while ( genres_from_db.next() ) {
-               genres.add(genres_from_db.getString("genre"));
-            }
-
-            movie = new Movie();
-            movie.copy_values_of(
-                  movie_id
-                  , result.getString("title")
-                  , result.getString("synopsys")
-                  , result.getTimestamp("release_date")
-                  , result.getString("poster")
-                  , result.getString("director")
-                  , cast
-                  , genres);
+            movie = make_movie_from(result);
          }
       } catch (Exception e) {
          e.printStackTrace();
       }
 
       return movie;
+   }
+
+   private Movie make_movie_from(ResultSet result) throws SQLException {
+      Movie movie;
+      String movie_id = result.getString("id");
+      List<String> cast = cast_from_db( result.getString("cast") );
+      List<String> genres  = genres_from_db( result.getString("genres"));
+      movie = new Movie();
+      movie.copy_values_of(
+            movie_id
+            , result.getString("title")
+            , result.getString("synopsys")
+            , result.getTimestamp("release_date")
+            , result.getString("poster")
+            , result.getString("director")
+            , cast
+            , genres);
+      return movie;
+   }
+
+   private List<String> genres_from_db(String string) {
+      return List.of(string.split(","));
+   }
+
+   private List<String> cast_from_db(String string) {
+      return List.of(string.split(","));
    }
 
    @Override
