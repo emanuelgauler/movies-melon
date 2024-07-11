@@ -45,6 +45,11 @@ public class MysqlMoviesStore implements MoviesStore {
          insert_genres_from(movie);
 
          close_connection();
+      } catch (SQLException e ) {
+         if (1062 == e.getErrorCode())
+            throw new MovieExistingError(movie);
+         else
+            throw new Exception(String.format(">> ERROR: [%d] %s\n", e.getErrorCode(), e.getMessage()));
       } catch (Exception e) {
          e.printStackTrace();
          throw new Exception(e.getMessage());
