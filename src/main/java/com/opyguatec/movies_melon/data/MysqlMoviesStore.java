@@ -8,8 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.opyguatec.movies_melon.core.Movie;
+import com.opyguatec.movies_melon.core.MovieExistingError;
 import com.opyguatec.movies_melon.core.MovieNotFoundError;
 import com.opyguatec.movies_melon.core.MoviesStore;
 
@@ -21,7 +23,7 @@ public class MysqlMoviesStore implements MoviesStore {
    private Connection connection;
 
    @Override
-   public void add(Movie movie) throws MovieNotFoundError, Exception {
+   public void add(Movie movie) throws MovieExistingError, Exception {
 
       try {
          open_connection();
@@ -38,11 +40,38 @@ public class MysqlMoviesStore implements MoviesStore {
          create_command.setString(6, movie.getPoster());
          create_command.executeUpdate();
          create_command.close();
+
+         insert_cast_from(movie);
+         insert_genres_from(movie);
+
          close_connection();
       } catch (Exception e) {
          e.printStackTrace();
          throw new Exception(e.getMessage());
       }
+   }
+
+   private void insert_genres_from(Movie movie) throws SQLException {
+      String insert_genres = "INSERT INTO genres(movie_id, genre) VALUES %s";
+      String values = movie.getGenres().stream()
+            .map(e -> String.format("('%s','%s')", movie.its_id(), e))
+            .collect(Collectors.joining(","));
+
+      connection
+            .prepareStatement(String.format(insert_genres, values))
+            .executeUpdate();
+   }
+
+   private void insert_cast_from(Movie movie) throws SQLException {
+      String insert_cast = "INSERT INTO casts(movie_id, actor_name) VALUES %s";
+
+      String values = movie.getCast().stream()
+            .map(e -> String.format("('%s','%s')", movie.its_id(), e))
+            .collect(Collectors.joining(","));
+
+      connection
+         .prepareStatement(String.format(insert_cast, values))
+         .executeUpdate();
    }
 
    private void close_connection() throws SQLException {
@@ -68,8 +97,8 @@ public class MysqlMoviesStore implements MoviesStore {
                , result.getString("title")
                , result.getString("synopsys")
                , result.getDate("release_date")
-               , result.getString("director")
                , result.getString("poster")
+               , result.getString("director")
                , List.of("a1", "a2", "a3")
                , List.of("ciencia ficción", "drama"));
                
@@ -106,8 +135,13 @@ public class MysqlMoviesStore implements MoviesStore {
          if (result.next()) {
             movie = new Movie();
             movie.copy_values_of(
-                  result.getString("id"), result.getString("title"), result.getString("synopsys"),
-                  result.getTimestamp("release_date"), result.getString("director"), result.getString("poster"), null,
+                  result.getString("id")
+                  , result.getString("title")
+                  , result.getString("synopsys")
+                  , result.getTimestamp("release_date")
+                  , result.getString("poster")
+                  , result.getString("director")
+                  , null,
                   null);
          }
       } catch (Exception e) {
