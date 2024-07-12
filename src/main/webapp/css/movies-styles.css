@@ -19,7 +19,7 @@ figure.movie-card {
    cursor: pointer;
    border-radius: 1rem;
    overflow: hidden;
-   transition: filter 300ms ease-in-out;
+   transition: filter 200ms ease-in-out;
    img {
       width: 100%;
       object-fit: cover;
@@ -31,9 +31,6 @@ figure.movie-card {
          figcaption {
             opacity: 1;
             inset: 1rem;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
          }
       }
    figcaption {
@@ -47,7 +44,10 @@ figure.movie-card {
       position: absolute;
       width: 80%;
       height: 80%;
-      transition: opacity 300ms ease-in-out;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      transition: opacity 200ms ease-in-out;
    }
 
 }
