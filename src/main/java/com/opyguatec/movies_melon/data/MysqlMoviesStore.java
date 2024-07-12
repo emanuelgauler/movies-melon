@@ -153,11 +153,13 @@ public class MysqlMoviesStore implements MoviesStore {
    }
 
    @Override
-   public void save(Movie movie) {
+   public void save(Movie movie) throws MovieExistingError, Exception {
       try {
+         String cast    = cast_from_movie(movie);
+         String genres  = genres_from_movie(movie);
          open_connection();
          String instruction = "UPDATE movies SET "
-         + "title=?, synopsys=?, director=?, release_date=?, poster=?"
+         + "title=?, synopsys=?, director=?, release_date=?, poster=?, cast=?, genres=?"
          + " WHERE id=?;";
          PreparedStatement command
                      = connection.prepareStatement(instruction);
@@ -167,12 +169,19 @@ public class MysqlMoviesStore implements MoviesStore {
          command.setString(3, movie.getDirector());
          command.setDate(4, release_date);
          command.setString(5, movie.getPoster());
-         command.setString(6, movie.its_id());
+         command.setString(6, cast);
+         command.setString(7, genres);
+         command.setString(8, movie.its_id());
          command.executeUpdate();
          command.close();
          close_connection();
+      } catch (SQLException e) {
+         if (1062 == e.getErrorCode())
+            throw new MovieExistingError(movie);
+         else
+            throw new Exception(String.format(">> ERROR: [%d] %s\n", e.getErrorCode(), e.getMessage()));
       } catch (Exception e) {
-         e.printStackTrace();
+         throw new Exception(e.getMessage());
       }
    }
 

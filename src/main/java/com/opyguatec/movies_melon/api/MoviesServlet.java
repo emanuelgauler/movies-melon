@@ -65,7 +65,7 @@ public class MoviesServlet extends HttpServlet {
 
       try {
          String response = mapper.writeValueAsString( movies_from(melones) );
-         out.printf("{\"movies\":%s, \"count\":%d }", response, melones.listing().size());
+         out.printf("{\"count\":%d, \"movies\":%s }", melones.listing().size(), response);
       } catch (JsonProcessingException e ) {
          resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
       } catch (Exception e) {

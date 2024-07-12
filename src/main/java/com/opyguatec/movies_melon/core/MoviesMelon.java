@@ -25,7 +25,7 @@ public class MoviesMelon {
       store.remove_from_id(its_id);
    }
 
-   public void save(Movie movie) {
+   public void save(Movie movie) throws MovieNotFoundError, Exception {
       store.save(movie);
    }
 

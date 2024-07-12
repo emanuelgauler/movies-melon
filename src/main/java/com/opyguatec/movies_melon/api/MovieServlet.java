@@ -74,6 +74,9 @@ public class MovieServlet extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             resp.getWriter().println(mapper.writeValueAsString(new MovieNotFoundResponse()));
          }
+      } catch (MovieNotFoundError e) {
+         resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+         resp.getWriter().println(mapper.writeValueAsString(new MovieNotFoundResponse()));
       } catch (Exception e) {
          resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
       }

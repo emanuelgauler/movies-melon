@@ -14,6 +14,6 @@ public interface MoviesStore {
 
    void remove_from_id(String its_id) throws MovieNotFoundError;
 
-   void save(Movie movie);
+   void save(Movie movie) throws MovieNotFoundError, Exception;
 
 }
