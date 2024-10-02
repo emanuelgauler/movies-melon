@@ -51,3 +51,10 @@ figure.movie-card {
    }
 
 }
+
+header {
+   nav {
+      display: flex;
+      justify-content: space-between;
+   }
+}
