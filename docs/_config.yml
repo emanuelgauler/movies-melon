@@ -22,7 +22,7 @@ title: Movies Melon
 email: emanuelgauler@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Aplicación Web que muestra algunas películas
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "/movies-melon" # the subpath of your site, e.g. /blog
 url: "https://emanuelgauler.github.io/movies-melon" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: emanuelgauler
 github_username:  emanuelgauler
